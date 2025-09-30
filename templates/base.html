@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}CateringPro{% endblock %}</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #fceabb, #f8b500);
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #ffffffcc;
+            padding: 15px 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-bottom: 2px solid #e74c3c;
+        }
+
+        header h1 {
+            margin: 0;
+            color: #e74c3c;
+            font-size: 2em;
+            text-align: center;
+        }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #e74c3c;
+            font-weight: bold;
+            margin: 0 12px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #c0392b;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #ffffffcc;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px 0;
+            background-color: #ffffffcc;
+            border-top: 2px solid #e74c3c;
+            margin-top: 40px;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+        }
+
+        footer p {
+            margin: 0;
+            color: #333;
+            font-weight: bold;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background-color: #e74c3c;
+            margin: 10px 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            nav a {
+                display: block;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CateringPro Management</h1>
+        <nav>
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            <a href="{% url 'ingredient_list' %}">Ingredients</a>
+            <a href="{% url 'dish_list' %}">Dishes</a>
+            <a href="{% url 'customer_list' %}">Customers</a>
+            <a href="{% url 'cooking_item_list' %}">Cooking Items</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2025 CateringPro</p>
+    </footer>
+</body>
+</html>

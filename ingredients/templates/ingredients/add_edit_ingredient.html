@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="form-card">
+        <h2 style="color:#e74c3c; text-align:center; margin-bottom:20px;">{{ title }}</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-fields">
+                {{ form.as_p }}
+                
+                <!-- Image preview -->
+                {% if form.instance.image %}
+                    <p>Current Image (from Excel / URL / Upload):</p>
+                    <img src="{{ form.instance.image.url }}" class="ingredient-img-preview">
+                {% elif form.cleaned_data.image_url %}
+                    <p>Preview Image from URL:</p>
+                    <img src="{{ form.cleaned_data.image_url }}" class="ingredient-img-preview">
+                {% else %}
+                    <p>No image uploaded yet.</p>
+                {% endif %}
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="save-btn">💾 Save</button>
+                <a href="{% url 'ingredient_list' %}" class="cancel-btn">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.container { max-width:600px; margin:50px auto; padding:20px; }
+.form-card { background:#fff; padding:25px 20px; border-radius:15px; box-shadow:0 8px 25px rgba(0,0,0,0.2); }
+.ingredient-img-preview { width:150px; height:150px; object-fit:cover; margin-top:10px; border-radius:12px; border:1px solid #ddd; }
+
+button.save-btn { background:#27ae60; color:#fff; border:none; padding:12px 25px; border-radius:8px; font-weight:bold; cursor:pointer; }
+a.cancel-btn { text-decoration:none; background:#95a5a6; color:#fff; padding:12px 25px; border-radius:8px; font-weight:bold; }
+</style>
+{% endblock %}

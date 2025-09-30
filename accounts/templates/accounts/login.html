@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - CateringPro</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #fceabb, #f8b500);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      background-color: #ffffffcc;
+      padding: 40px 50px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      width: 350px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #e74c3c;
+      margin-bottom: 25px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    label {
+      text-align: left;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input[type="text"], input[type="password"] {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    button {
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background-color: #e74c3c;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #c0392b;
+    }
+
+    .error-message {
+      color: red;
+      font-weight: bold;
+    }
+
+    .signup-link {
+      margin-top: 15px;
+      display: block;
+      color: #e74c3c;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .signup-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Login</h2>
+    {% if error %}
+      <p class="error-message">{{ error }}</p>
+    {% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <label>Username:</label>
+      <input type="text" name="username" required>
+      
+      <label>Password:</label>
+      <input type="password" name="password" required>
+      
+      <button type="submit">Login</button>
+    </form>
+    <a href="{% url 'signup' %}" class="signup-link">Don't have an account? Sign Up</a>
+  </div>
+</body>
+</html>

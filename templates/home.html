@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CateringPro - Home</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f9f7f6, #ffe6e6);
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 60px auto;
+      background-color: #ffffffcc; /* semi-transparent white */
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+
+    h1 {
+      color: #e74c3c;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 1.2em;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+
+    b {
+      color: #c0392b;
+    }
+
+    a {
+      display: inline-block;
+      text-decoration: none;
+      background-color: #e74c3c;
+      color: #fff;
+      padding: 10px 25px;
+      margin: 10px 5px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    a:hover {
+      background-color: #c0392b;
+    }
+
+    .info {
+      background-color: #fceae9;
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #c0392b;
+    }
+
+    .actions {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to CateringPro Management Suite</h1>
+    <p>
+      CateringPro helps you manage <b>customers, ingredients, dishes, and cooking items</b> 
+      all in one place. Streamline your catering business with ease.
+    </p>
+
+    {% if user.is_authenticated %}
+      <div class="info">
+        You are logged in as {{ user.username }}.
+      </div>
+      <div class="actions">
+        <a href="{% url 'dashboard' %}">Go to Dashboard</a>
+        <a href="{% url 'logout' %}">Logout</a>
+      </div>
+    {% else %}
+      <div class="actions">
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'signup' %}">Sign Up</a>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="delete-card">
+        <h2 style="color:#e74c3c; text-align:center; margin-bottom:20px;">Delete Ingredient</h2>
+        <p style="text-align:center; font-size:1.1em;">
+            Are you sure you want to delete 
+            <strong>{{ ingredient.name_en|default:"Unnamed Ingredient" }}</strong>?
+        </p>
+
+        <form method="post" style="text-align:center; margin-top:20px;">
+            {% csrf_token %}
+            <button type="submit" class="delete-btn">Yes, Delete</button>
+            <a href="{% url 'ingredient_list' %}" class="cancel-btn">Cancel</a>
+        </form>
+    </div>
+</div>
+
+<style>
+.container { max-width: 500px; margin: 50px auto; padding: 20px; }
+.delete-card { background-color: #ffffffcc; padding: 30px 20px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.2); text-align: center; }
+
+button.delete-btn { background-color: #e74c3c; color: #fff; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-right: 10px; transition: background-color 0.3s; }
+button.delete-btn:hover { background-color: #c0392b; }
+
+a.cancel-btn { text-decoration: none; background-color: #95a5a6; color: #fff; padding: 12px 25px; border-radius: 8px; font-weight: bold; transition: background-color 0.3s; }
+a.cancel-btn:hover { background-color: #7f8c8d; }
+</style>
+{% endblock %}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cooking Items - CateringPro</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #fceabb, #f8b500);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #ffffffcc;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      text-align: center;
+      color: #e74c3c;
+      margin-bottom: 25px;
+    }
+
+    .add-btn {
+      display: inline-block;
+      text-decoration: none;
+      background-color: #27ae60;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      transition: background-color 0.3s;
+    }
+
+    .add-btn:hover {
+      background-color: #1e8449;
+    }
+
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .item-card {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .item-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    .item-card h2 {
+      margin: 0 0 10px 0;
+      color: #e74c3c;
+      font-size: 1.2em;
+    }
+
+    .unit {
+      font-size: 0.95em;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .actions a {
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      margin-right: 5px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+      color: #fff;
+    }
+
+    .actions .edit-btn {
+      background-color: #f1c40f;
+    }
+
+    .actions .edit-btn:hover {
+      background-color: #d4ac0d;
+    }
+
+    .actions .delete-btn {
+      background-color: #e74c3c;
+    }
+
+    .actions .delete-btn:hover {
+      background-color: #c0392b;
+    }
+
+    .no-items {
+      text-align: center;
+      font-style: italic;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Cooking Items</h1>
+    <a href="{% url 'cooking_item_add' %}" class="add-btn">➕ Add New Item</a>
+
+    {% if items %}
+    <div class="items-grid">
+      {% for item in items %}
+      <div class="item-card">
+        <h2>{{ item.name_en }}</h2>
+        <p class="unit">Unit: {{ item.unit }}</p>
+        <div class="actions">
+          <a href="{% url 'cooking_item_edit' item.pk %}" class="edit-btn">✏️ Edit</a>
+          <a href="{% url 'cooking_item_delete' item.pk %}" class="delete-btn">❌ Delete</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+      <p class="no-items">No cooking items yet.</p>
+    {% endif %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,216 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chef Hub Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #fceabb, #f8b500);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      width: 1100px;
+      margin: 60px auto;
+      padding: 40px;
+      background-color: #ffffffee;
+      border-radius: 20px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+    }
+    h1 {
+      text-align: center;
+      color: #e74c3c;
+      margin-bottom: 20px;
+      font-size: 3em;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    .welcome {
+      text-align: center;
+      font-size: 1.9em;
+      margin-bottom: 30px;
+      font-weight: 600;
+      text-transform: capitalize;
+      letter-spacing: 0.8px;
+      background: linear-gradient(90deg, #2c3e50, #2980b9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transition: transform 0.3s ease;
+    }
+    .welcome:hover {
+      transform: scale(1.02);
+    }
+    .user-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    .profile-pic {
+      flex: 0 0 160px;
+      height: 160px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      border: 5px solid transparent;
+      background: linear-gradient(45deg, #e74c3c, #2980b9) border-box;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .profile-pic:hover {
+      transform: scale(1.08);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .user-details {
+      flex: 1;
+      padding: 25px;
+      background-color: #f9f9f9;
+      border-radius: 12px;
+      text-align: left;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .user-details p {
+      margin: 12px 0;
+      font-size: 1.2em;
+      color: #333;
+    }
+    .user-details p strong {
+      color: #2c3e50;
+      font-weight: 600;
+    }
+    .user-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 15px;
+    }
+    .user-actions a {
+      padding: 12px 25px;
+      background-color: #2980b9;
+      color: #fff;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1em;
+      font-family: 'Roboto', sans-serif;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .user-actions a:hover {
+      background-color: #1b6ca8;
+      transform: translateY(-3px);
+    }
+    .catering-name {
+      text-align: center;
+      font-size: 2.5em;
+      font-weight: 700;
+      color: #1565c0; /* Deeper cold blue for elegance */
+      margin: 30px 0;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      font-family: 'Roboto', sans-serif;
+      clear: both;
+      text-shadow: 0 0 8px rgba(21, 101, 192, 0.3); /* Subtle glow */
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+      margin-top: 40px;
+    }
+    .card {
+      background-color: #fff;
+      padding: 35px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    }
+    .card a {
+      text-decoration: none;
+      font-weight: bold;
+      color: #e74c3c;
+      font-size: 1.3em;
+      display: block;
+    }
+    .card a:hover {
+      color: #c0392b;
+    }
+    .card p {
+      margin-top: 12px;
+      font-size: 1.2em;
+      color: #1922d4;
+    }
+    .logout-btn {
+      display: block;
+      width: 200px;
+      margin: 50px auto 0;
+      padding: 15px 30px;
+      background-color: #e74c3c;
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.2em;
+      border-radius: 10px;
+      text-align: center;
+      font-family: 'Roboto', sans-serif;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .logout-btn:hover {
+      background-color: #c0392b;
+      transform: translateY(-5px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>CHEF HUB</h1>
+    <p class="welcome">{{ user.username }}</p>
+    <div class="user-info">
+      <!-- Profile picture -->
+      {% if user.profile_picture %}
+        <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="profile-pic">
+      {% else %}
+        <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="profile-pic">
+      {% endif %}
+      <!-- User details -->
+      <div class="user-details">
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Token:</strong> {{ user.token }}</p>
+        <p><strong>Phone:</strong> {{ user.phone_number }}</p>
+        <p><strong>Sex:</strong> {{ user.get_sex_display }}</p>
+        <p><strong>Address:</strong> {{ user.address }}</p>
+        <div class="user-actions">
+          <a href="{% url 'edit_profile' %}">Edit Profile</a>
+          <a href="{% url 'change_password' %}">Change Password</a>
+        </div>
+      </div>
+    </div>
+    <p class="catering-name">{{ user.catering_name }}</p>
+    <div class="grid">
+      <div class="card">
+        <a href="{% url 'ingredient_list' %}">Ingredients</a>
+        <p>Total: {{ ingredient_count }}</p>
+      </div>
+      <div class="card">
+        <a href="{% url 'customer_list' %}">Customers</a>
+      </div>
+      <div class="card">
+        <a href="{% url 'dish_list' %}">Dishes</a>
+      </div>
+      <div class="card">
+        <a href="{% url 'cooking_item_list' %}">Manage Cooking Items</a>
+      </div>
+    </div>
+    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+  </div>
+</body>
+</html>

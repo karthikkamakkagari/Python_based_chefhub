@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+    <h2>Welcome, {{ user.username }}</h2>
+    <p>Account Type: {{ user.account_type }}</p>
+    <p>Token: {{ user.token }}</p>
+    <p>Preferred Language: {{ user.get_preferred_language_display }}</p>
+    <a href="{% url 'logout' %}">Logout</a>
+</body>
+</html>

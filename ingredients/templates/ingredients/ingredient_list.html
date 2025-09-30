@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <h2 style="text-align:center; color:#e74c3c; margin-bottom:20px;">{{ title }}</h2>
+
+    <div style="text-align:center; margin-bottom:20px;">
+        <a href="{% url 'add_ingredient' %}" class="add-btn">➕ Add Ingredient</a>
+        <a href="{% url 'export_ingredients' %}" class="export-btn">📤 Export Excel</a>
+        <a href="{% url 'import_ingredients' %}" class="import-btn">📥 Import Excel</a>
+    </div>
+
+    {% if items %}
+    <div class="ingredients-grid">
+        {% for item in items %}
+        <div class="ingredient-card">
+            <div class="image-wrapper">
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" alt="{{ item.name_en }}" class="ingredient-img">
+                {% else %}
+                    <img src="{% static 'images/placeholder.png' %}" alt="No Image" class="ingredient-img">
+                {% endif %}
+            </div>
+            <h5 class="ingredient-name">{{ item.name_en }}</h5>
+            <p><strong>ID:</strong> {{ item.ingredient_id }}</p>
+            <p><strong>Quantity:</strong> {{ item.quantity }} {{ item.unit }}</p>
+            <p><strong>Price:</strong> ₹{{ item.price }}</p>
+            {% if item.image_url %}
+            <p class="image-source">📥 Imported from URL/Excel</p>
+            {% endif %}
+            <div class="actions">
+                <a href="{% url 'edit_ingredient' item.pk %}" class="edit-btn">✏️ Edit</a>
+                <a href="{% url 'delete_ingredient' item.pk %}" class="delete-btn">❌ Delete</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-items">No ingredients found.</p>
+    {% endif %}
+</div>
+
+<style>
+.container { max-width: 1200px; margin:0 auto; padding:20px; }
+.add-btn, .export-btn, .import-btn {
+    display:inline-block; text-decoration:none; padding:10px 20px; border-radius:8px; color:#fff; margin:0 5px; font-weight:bold; transition:0.3s;
+}
+.add-btn { background:#27ae60; }
+.add-btn:hover { background:#1e8449; }
+.export-btn { background:#2980b9; }
+.export-btn:hover { background:#1f618d; }
+.import-btn { background:#f39c12; }
+.import-btn:hover { background:#d68910; }
+
+.ingredients-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; max-height:75vh; overflow-y:auto; }
+.ingredient-card { background:#fff; padding:20px; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.1); text-align:center; display:flex; flex-direction:column; justify-content:space-between; min-height:370px; }
+.ingredient-card:hover { transform:translateY(-5px); box-shadow:0 8px 25px rgba(0,0,0,0.2); }
+
+.ingredient-img { width:100px; height:100px; object-fit:cover; border-radius:12px; margin-bottom:15px; border:1px solid #ddd; transition:0.3s; }
+.ingredient-img:hover { transform:scale(1.1); }
+
+.ingredient-name { font-size:1.1em; color:#e74c3c; margin-bottom:10px; }
+.image-source { font-size:0.85em; color:#16a085; margin:5px 0; }
+
+.actions a { text-decoration:none; padding:8px 15px; border-radius:8px; margin:5px 5px 0 5px; font-weight:bold; color:#fff; display:inline-block; transition:0.3s; }
+.edit-btn { background:#f1c40f; }
+.edit-btn:hover { background:#d4ac0d; }
+.delete-btn { background:#e74c3c; }
+.delete-btn:hover { background:#c0392b; }
+
+.no-items { text-align:center; font-style:italic; color:#555; margin-top:20px; }
+
+@media (max-width:600px) { .ingredients-grid { grid-template-columns:1fr; max-height:none; overflow-y:visible; } .ingredient-card { min-height:auto; } }
+</style>
+{% endblock %}
