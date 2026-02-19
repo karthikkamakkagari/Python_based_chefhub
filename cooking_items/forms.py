@@ -5,7 +5,10 @@ class CookingItemForm(forms.ModelForm):
     class Meta:
         model = CookingItem
         fields = [
-            'item_id', 'name_en', 'name_te', 'name_ta', 'name_hi', 'name_ka',
+            'name_en', 'name_te', 'name_ta', 'name_hi', 'name_ka',
             'summary_en', 'summary_te', 'summary_ta', 'summary_hi', 'summary_ka',
-            'image', 'unit'
+            'cost',
+            'image',
+            'quantity'
         ]
+

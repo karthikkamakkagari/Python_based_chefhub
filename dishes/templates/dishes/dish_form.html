@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% if dish %}Edit Dish{% else %}Add Dish{% endif %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        form {
+            width: 70%;
+            margin: 20px auto;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+        .btn {
+            padding: 8px 14px;
+            text-decoration: none;
+            border-radius: 5px;
+            border: 1px solid #333;
+            cursor: pointer;
+        }
+        .btn-save {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn-back {
+            background-color: #ccc;
+            color: black;
+        }
+        .btn-add {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-delete-row {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        .btn:hover {
+            opacity: 0.85;
+        }
+        h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h2>{% if dish %}Edit Dish{% else %}Add Dish{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <!-- Dish Details -->
+    <fieldset>
+        <legend>Dish Details</legend>
+        {{ dish_form.as_p }}
+    </fieldset>
+
+    <!-- Ingredient Section -->
+    <fieldset>
+        <legend>Ingredients</legend>
+
+        {{ formset.management_form }}
+        <table id="ingredient-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in formset %}
+                <tr class="ingredient-form">
+                    <td>{{ form.name }}</td>
+                    <td>{{ form.quantity }}</td>
+                    <td>
+                        {% if form.DELETE %}
+                            {{ form.DELETE }}
+                        {% else %}
+                            <input type="checkbox" disabled>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3"><em>No ingredients yet. Add one below.</em></td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <br>
+        <button type="button" id="add-ingredient" class="btn btn-add">+ Add Ingredient</button>
+    </fieldset>
+
+    <br>
+    <button type="submit" class="btn btn-save">Save</button>
+    <a href="{% url 'dish_list' %}" class="btn btn-back">Cancel</a>
+</form>
+
+<!-- ✅ JavaScript to add new ingredient rows dynamically -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addButton = document.getElementById('add-ingredient');
+    const tableBody = document.querySelector('#ingredient-table tbody');
+    const totalForms = document.querySelector('#id_form-TOTAL_FORMS');
+
+    addButton.addEventListener('click', function() {
+        const formIndex = parseInt(totalForms.value);
+        const newRow = document.createElement('tr');
+        newRow.classList.add('ingredient-form');
+
+        newRow.innerHTML = `
+            <td><input type="text" name="form-${formIndex}-name" maxlength="100" required id="id_form-${formIndex}-name"></td>
+            <td><input type="text" name="form-${formIndex}-quantity" maxlength="100" id="id_form-${formIndex}-quantity"></td>
+            <td><button type="button" class="btn-delete-row">X</button></td>
+        `;
+
+        tableBody.appendChild(newRow);
+        totalForms.value = formIndex + 1; // increment total form count
+    });
+
+    // Allow deleting dynamically added rows before save
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('btn-delete-row')) {
+            e.target.closest('tr').remove();
+        }
+    });
+});
+</script>
+
+</body>
+</html>

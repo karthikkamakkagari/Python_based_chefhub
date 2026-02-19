@@ -5,6 +5,9 @@ from django.core.files.base import ContentFile
 import pandas as pd
 import requests
 from .models import Ingredient
+from dishes.models import Dish
+from cooking_items.models import CookingItem
+from customers.models import Customer
 from .forms import IngredientForm
 from openpyxl import Workbook, load_workbook
 from openpyxl.drawing.image import Image as OpenpyxlImage
@@ -190,7 +193,14 @@ def import_ingredients(request):
 @login_required
 def dashboard_ingredient_count(request):
     ingredient_count = Ingredient.objects.count()
+    print("Ingredient Count:", Ingredient.objects.count())
+    # context = {
+    #     'ingredient_count': ingredient_count
+    # }
     context = {
-        'ingredient_count': ingredient_count
+        "ingredient_count": Ingredient.objects.count(),
+        "dish_count": Dish.objects.count(),
+        "cooking_item_count": CookingItem.objects.count(),
+        "customer_count": Customer.objects.count(),
     }
     return render(request, 'dashboard.html', context)

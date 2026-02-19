@@ -22,6 +22,17 @@ class Ingredient(models.Model):
     quantity = models.FloatField(default=0)
     unit = models.CharField(max_length=20, choices=UNIT_CHOICES, blank=True, null=True)
     price = models.FloatField(default=0.0)
+    def get_name(self, language):
+        language_map = {
+            "TA": self.name_ta,
+            "HI": self.name_hi,
+            "TE": self.name_te,
+            "KA": self.name_ka,
+            "EN": self.name_en,
+        }
+
+        return language_map.get(language, self.name_en)
+
 
     def __str__(self):
         return self.name_en

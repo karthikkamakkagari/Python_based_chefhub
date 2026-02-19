@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.container {
+    max-width: 600px;
+    margin: auto;
+    padding: 40px;
+}
+
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+</style>
+
+<div class="container">
+    <div class="card">
+        <h2>Import Customers (Excel)</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="file" required>
+            <br><br>
+            <button type="submit">Upload & Import</button>
+        </form>
+
+        <br>
+        <p><strong>Excel Format Required:</strong></p>
+        <ul>
+            <li>Name</li>
+            <li>Phone</li>
+            <li>Address</li>
+            <li>Number of Persons</li>
+        </ul>
+    </div>
+</div>
+
+{% endblock %}

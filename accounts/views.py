@@ -31,7 +31,6 @@ def edit_user(request, user_id):
         form = UpdateUserForm(instance=user_obj)
     return render(request, 'accounts/edit_user.html', {'form': form, 'user_obj': user_obj})
 
-
 def signup_view(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST, request.FILES)
@@ -90,7 +89,6 @@ def edit_profile(request):
         'user': user
     }
     return render(request, 'accounts/edit_profile.html', context)
-
 
 @login_required
 def change_password(request):

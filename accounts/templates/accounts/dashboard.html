@@ -6,8 +6,15 @@
 <body>
     <h2>Welcome, {{ user.username }}</h2>
     <p>Account Type: {{ user.account_type }}</p>
-    <p>Token: {{ user.token }}</p>
+    <p>Token: {% if user.account_type == 'SUPREM' %}∞{% else %}{{ user.token }}{% endif %}</p>
     <p>Preferred Language: {{ user.get_preferred_language_display }}</p>
-    <a href="{% url 'logout' %}">Logout</a>
+
+    {% if user.account_type == 'SUPREM' %}
+        <p>SUPREM Temporary Display Account:</p>
+        <ul>
+            <li>Email: karthikraj21011992@gmail.com</li>
+            <li>Phone: 8897497962</li>
+        </ul>
+    {% endif %}
 </body>
 </html>

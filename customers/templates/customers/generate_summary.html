@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.container { max-width: 1200px; margin: 40px auto; }
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+}
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+}
+th {
+    background: #667eea;
+    color: white;
+}
+.total-box {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: right;
+}
+.form-actions button:hover { background:#0d47a1; }
+
+.form-actions a {
+    background:#1ce018;
+    color:#3e79b5;
+    text-decoration:none;
+    padding:12px 25px;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+</style>
+
+<div class="container">
+    <div class="form-actions">
+        <a href="{% url 'customer_list' %}">Back to Customer List</a>
+    </div>
+
+    <div class="card">
+        {% if language == "TA" %}
+            <h2>உணவகம் உரிமையாளர் விவரம்</h2>
+            <p><strong>பெயர்:</strong> {{ owner.username }}</p>
+            <p><strong>மின்னஞ்சல்:</strong> {{ owner.email }}</p>
+            <p><strong>தொலைபேசி:</strong> {{ owner.phone_number }}</p>
+            <p><strong>முகவரி:</strong> {{ owner.address }}</p>
+        {% else %}
+            <h2>Catering Proprietor Details</h2>
+            <p><strong>Name:</strong> {{ owner.username }}</p>
+            <p><strong>Email:</strong> {{ owner.email }}</p>
+            <p><strong>Phone:</strong> {{ owner.phone_number }}</p>
+            <p><strong>Address:</strong> {{ owner.address }}</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        {% if language == "TA" %}
+            <h2>வாடிக்கையாளர் ரசீது</h2>
+            <p><strong>பெயர்:</strong> {{ customer.name }}</p>
+            <p><strong>தொலைபேசி:</strong> {{ customer.phone }}</p>
+            <p><strong>நபர்கள்:</strong> {{ customer.num_person }}</p>
+        {% else %}
+            <h2>Customer Slip</h2>
+            <p><strong>Name:</strong> {{ customer.name }}</p>
+            <p><strong>Phone:</strong> {{ customer.phone }}</p>
+            <p><strong>No. of Persons:</strong> {{ customer.num_person }}</p>
+            <p><strong>Address:</strong> {{ customer.address }}</p>
+            <p><strong>Reason:</strong> {{ customer.reason }}</p>
+        {% endif %}
+    </div>
+
+
+<div class="card">
+    <div class="section-title">Selected Dishes</div>
+    <ul>
+        {% for dish in dishes %}
+            <li>• {{ dish.name_en }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="card">
+    <div class="section-title">Total Ingredient List</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Ingredient</th>
+                <th>Total Qty</th>
+                <th>Unit</th>
+                <th>Price</th>
+                <th>Total Cost</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for name, data in ingredient_summary.items %}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ data.qty }}</td>
+                <td>{{ data.unit }}</td>
+                <td>₹ {{ data.price }}</td>
+                <td>₹ {{ data.total }}</td>
+            </tr>
+            {% endfor %}
+            <tr style="font-weight:bold;">
+                <td colspan="3">Total Ingredient </td>
+                <td>{{ Ingredient_count }}</td>
+            </tr>
+            <tr style="font-weight:bold;">
+                <td colspan="3">Total Ingredient Cost</td>
+                <td>{{ total_ingredient_cost }}</td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <div class="section-title">Cooking Items</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>Cost</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for name, data in cooking_summary.items %}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ data.qty }}</td>
+                <td>{{ data.total }}</td>
+            </tr>
+            {% endfor %}
+            <tr style="font-weight:bold;">
+                <td colspan="2">Total Cooking Items </td>
+                <td>{{ cooking_items_count }}</td>
+            </tr>
+            <tr style="font-weight:bold;">
+                <td colspan="2">Total Cooking Items Cost</td>
+                <td>{{ total_cooking_cost }}</td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+
+<h3 style="margin-top:20px;">
+    Grand Total: {{ grand_total }}
+</h3>
+
+<div style="text-align:center; margin-top:20px;">
+    <a href="{% url 'export_customer_pdf' customer.id %}" 
+       style="background:#28a745;color:white;padding:12px 25px;
+              border-radius:8px;text-decoration:none;">
+        Download PDF
+    </a>
+</div>
+
+</div>
+
+{% endblock %}

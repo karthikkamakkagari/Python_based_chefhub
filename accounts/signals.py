@@ -7,6 +7,10 @@ User = get_user_model()
 
 @receiver(post_save, sender=User)
 def set_token(sender, instance, created, **kwargs):
-    if created and instance.token == 0:
-        instance.token = instance.id
+    if created:
+        if instance.account_type == 'SUPREM':
+            instance.token = 999999
+        elif instance.token == 0:
+            instance.token = 0  # default, needs SUPREM approval
         instance.save()
+

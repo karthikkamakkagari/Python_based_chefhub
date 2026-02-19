@@ -31,5 +31,8 @@ class CustomUser(AbstractUser):
     catering_name = models.CharField(max_length=100, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
 
-    def __str__(self):
-        return self.username
+    def save(self, *args, **kwargs):
+        # Ensure SUPREM has infinite tokens
+        if self.account_type == 'SUPREM':
+            self.token = 999999
+        super().save(*args, **kwargs)

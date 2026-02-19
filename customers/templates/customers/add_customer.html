@@ -1,63 +1,443 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Add Customer</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f9f9f9;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        form {
-            width: 50%;
-            margin: auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: bold;
-        }
-        input {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
-            background: #007BFF;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        .back-link {
-            display: block;
-            margin-top: 15px;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <h1>Add Customer</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save Customer</button>
-    </form>
-    <a class="back-link" href="{% url 'customer_list' %}">⬅ Back to Customer List</a>
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container py-5">
+
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-dark text-white rounded-top-4">
+            <h3 class="mb-0">{{ form_title }}</h3>
+        </div>
+
+        <div class="card-body p-4">
+
+            <form method="POST" enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form.as_p }}
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- ================= DISH SECTION ================= -->
+
+                <h4 class="fw-bold mb-3">🍽 Select Dishes</h4>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <select id="dishDropdown" class="form-select">
+                            <option value="">-- Select Dish --</option>
+                            {% for id, name in dish_dropdown.items %}
+                                <option value="{{ id }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" onclick="addDish()" class="btn btn-primary w-100">
+                            Add Dish
+                        </button>
+                    </div>
+                </div>
+
+                <div id="dishContainer"></div>
+                <div id="dishHiddenInputs"></div>
+
+                <hr class="my-4">
+                <!-- ================= INGREDIENT SECTION ================= -->
+
+                <h4 class="fw-bold mb-3">🍽 Select Ingredient</h4>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <select id="ingredientDropdown" class="form-select">
+                            <option value="">-- Select Ingredient --</option>
+                            {% for id, name in ingredient_dropdown.items %}
+                                <option value="{{ id }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" onclick="addIngredient()" class="btn btn-primary w-100">
+                            Add Ingredient
+                        </button>
+                    </div>
+                </div>
+
+                <div id="IngredientContainer"></div>
+                <div id="IngredientHiddenInputs"></div>
+
+                <hr class="my-4">
+
+                <!-- ================= COOKING ITEMS ================= -->
+
+                <h4 class="fw-bold mb-3">🔥 Select Cooking Items</h4>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <select id="cookingDropdown" class="form-select">
+                            <option value="">-- Select Cooking Item --</option>
+                            {% for item in cooking_items %}
+                                <option value="{{ item.id }}">{{ item.name_en }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" onclick="addCooking()" class="btn btn-success w-100">
+                            Add Cooking Item
+                        </button>
+                    </div>
+                </div>
+
+                <div id="cookingContainer"></div>
+                <div id="cookingHiddenInputs"></div>
+
+                <hr class="my-4">
+
+                <!-- ================= GRAND TOTAL ================= -->
+
+                <div class="card bg-light border-0 shadow-sm p-4 text-center">
+                    <h4 class="fw-bold text-dark">
+                        Grand Total: ₹ 
+                        <span id="grand-total" class="text-success">0.00</span>
+                    </h4>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-lg btn-dark px-5">
+                        💾 Save Customer
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+let dishData = {{ dish_json|safe }};
+let cookingData = {{ cooking_json|safe }};
+let ingredientData = {{ ingredient_json|safe }};
+
+function getPersons() {
+    let personsInput = document.getElementById("id_num_person");
+    return parseFloat(personsInput.value) || 1;
+}
+
+/* ------------------- DISH SECTION ------------------- */
+
+function addDish() {
+
+    let dropdown = document.getElementById("dishDropdown");
+    let id = dropdown.value;
+
+    if (!id || document.getElementById("dish-" + id)) return;
+
+    let dish = dishData[id];
+    let persons = getPersons();
+
+    let container = document.createElement("div");
+    container.id = "dish-" + id;
+    container.className = "card shadow-sm mb-4";
+
+    let dishTotal = 0;
+
+    let html = `
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">${dish.name}</h5>
+            <button type="button" class="btn btn-sm btn-danger" onclick="removeDish(${id})">
+                Delete
+            </button>
+        </div>
+
+        <div class="card-body">
+        <div class="table-responsive">
+        <table class="table table-bordered align-middle text-center">
+        <thead class="table-dark">
+        <tr>
+            <th>Ingredient</th>
+            <th>Per Person Qty</th>
+            <th>Total Qty</th>
+            <th>Unit</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+    `;
+
+    dish.ingredients.forEach(function(ing, index) {
+
+        let totalQty = ing.quantity * persons;
+        let total = totalQty * ing.price;
+        dishTotal += total;
+
+        html += `
+            <tr>
+                <td>${ing.name}</td>
+                <td>${ing.quantity}</td>
+                <td id="totalqty-${id}-${index}">${totalQty.toFixed(2)}</td>
+                <td>${ing.unit}</td>
+                <td>₹ ${ing.price.toFixed(2)}</td>
+                <td id="total-${id}-${index}" class="fw-bold text-success">
+                    ${total.toFixed(2)}
+                </td>
+            </tr>
+        `;
+    });
+
+    html += `
+        </tbody>
+        </table>
+        </div>
+        <h5 class="text-end mt-3">
+            Dish Total: ₹ 
+            <span id="dish-total-${id}" class="text-primary fw-bold">
+                ${dishTotal.toFixed(2)}
+            </span>
+        </h5>
+        </div>
+    `;
+
+    container.innerHTML = html;
+    document.getElementById("dishContainer").appendChild(container);
+
+    let hidden = document.createElement("input");
+    hidden.type = "hidden";
+    hidden.name = "selected_dishes";
+    hidden.value = id;
+    hidden.id = "dish-input-" + id;
+
+    document.getElementById("dishHiddenInputs").appendChild(hidden);
+
+    updateGrandTotal();
+}
+
+function removeDish(id) {
+    document.getElementById("dish-" + id).remove();
+    document.getElementById("dish-input-" + id).remove();
+    updateGrandTotal();
+}
+
+/* ------------------- INGREDIENT SECTION ------------------- */
+
+/* ------------------- INGREDIENT SECTION ------------------- */
+
+function addIngredient() {
+
+    let dropdown = document.getElementById("ingredientDropdown");
+    let id = dropdown.value;
+
+    if (!id || document.getElementById("ing-" + id)) return;
+
+    let item = ingredientData[id];
+    let persons = getPersons();
+
+    let container = document.createElement("div");
+    container.id = "ing-" + id;
+    container.className = "card shadow-sm mb-4";
+
+    let totalQty = 1 * persons;
+    let total = totalQty * item.price;
+
+    let html = `
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">${item.name}</h5>
+            <button type="button" class="btn btn-sm btn-danger" onclick="removeIngredient(${id})">
+                Delete
+            </button>
+        </div>
+
+        <div class="card-body">
+        <div class="table-responsive">
+        <table class="table table-bordered align-middle text-center">
+        <thead class="table-dark">
+        <tr>
+            <th>Ingredient</th>
+            <th>Qty</th>
+            <th>Total Qty</th>
+            <th>Unit</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>${item.name}</td>
+                <td>
+                    <input type="number"
+                        value="1"
+                        min="1"
+                        onchange="updateIngredient(${id})"
+                        id="ing-qty-${id}"
+                        class="form-control">
+                </td>
+                <td id="ing-totalqty-${id}">
+                    ${totalQty.toFixed(2)}
+                </td>
+                <td>${item.unit}</td>
+                <td>₹ ${item.price.toFixed(2)}</td>
+                <td id="ing-total-${id}" class="fw-bold text-success">
+                    ${total.toFixed(2)}
+                </td>
+            </tr>
+        </tbody>
+        </table>
+        </div>
+        </div>
+    `;
+
+    container.innerHTML = html;
+    document.getElementById("IngredientContainer").appendChild(container);
+
+    let hidden = document.createElement("input");
+    hidden.type = "hidden";
+    hidden.name = "selected_ingredients";
+    hidden.value = id;
+    hidden.id = "ing-input-" + id;
+
+    document.getElementById("IngredientHiddenInputs").appendChild(hidden);
+
+    updateGrandTotal();
+}
+
+function updateIngredient(id) {
+
+    let persons = getPersons();
+    let qty = parseFloat(document.getElementById("ing-qty-" + id).value) || 0;
+
+    let price = ingredientData[id].price;
+    let totalQty = qty * persons;
+    let total = totalQty * price;
+
+    document.getElementById("ing-totalqty-" + id).innerText = totalQty.toFixed(2);
+    document.getElementById("ing-total-" + id).innerText = total.toFixed(2);
+
+    updateGrandTotal();
+}
+
+function removeIngredient(id) {
+    document.getElementById("ing-" + id).remove();
+    document.getElementById("ing-input-" + id).remove();
+    updateGrandTotal();
+}
+
+/* ------------------- COOKING ITEMS ------------------- */
+
+function addCooking() {
+
+    let dropdown = document.getElementById("cookingDropdown");
+    let id = dropdown.value;
+
+    if (!id || document.getElementById("cook-" + id)) return;
+
+    let item = cookingData[id];
+
+    let div = document.createElement("div");
+    div.id = "cook-" + id;
+    div.className = "card shadow-sm mb-3 p-3";
+
+    let total = item.price * 1;
+
+    div.innerHTML = `
+        <div class="row align-items-center">
+            <div class="col-md-3 fw-bold">${item.name}</div>
+            <div class="col-md-2">
+                <input type="number" value="1" min="1"
+                    onchange="updateCooking(${id})"
+                    id="cook-qty-${id}"
+                    class="form-control">
+            </div>
+            <div class="col-md-2">₹ ${item.price.toFixed(2)}</div>
+            <div class="col-md-3 fw-bold text-success">
+                ₹ <span id="cook-total-${id}">${total.toFixed(2)}</span>
+            </div>
+            <div class="col-md-2 text-end">
+                <button type="button" class="btn btn-sm btn-danger"
+                    onclick="removeCooking(${id})">
+                    Delete
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.getElementById("cookingContainer").appendChild(div);
+
+    let hidden = document.createElement("input");
+    hidden.type = "hidden";
+    hidden.name = "selected_cooking";
+    hidden.value = id;
+    hidden.id = "cook-input-" + id;
+
+    document.getElementById("cookingHiddenInputs").appendChild(hidden);
+
+    updateGrandTotal();
+}
+
+function updateCooking(id) {
+
+    let qty = parseFloat(document.getElementById("cook-qty-" + id).value) || 0;
+    let price = cookingData[id].price;
+    let total = qty * price;
+
+    document.getElementById("cook-total-" + id).innerText = total.toFixed(2);
+
+    updateGrandTotal();
+}
+
+/* ------------------- GRAND TOTAL ------------------- */
+
+function updateGrandTotal() {
+
+    let dishTotals = document.querySelectorAll("[id^='dish-total-']");
+    let cookingTotals = document.querySelectorAll("[id^='cook-total-']");
+    let ingredientTotals = document.querySelectorAll("[id^='ing-total-']");
+
+    let grandTotal = 0;
+
+    dishTotals.forEach(el => grandTotal += parseFloat(el.innerText) || 0);
+    cookingTotals.forEach(el => grandTotal += parseFloat(el.innerText) || 0);
+    ingredientTotals.forEach(el => grandTotal += parseFloat(el.innerText) || 0);
+
+    document.getElementById("grand-total").innerText = grandTotal.toFixed(2);
+}
+
+document.getElementById("id_num_person").addEventListener("change", function() {
+    updateGrandTotal();
+});
+
+/* ------------------- PRELOAD EDIT DATA ------------------- */
+
+let preSelectedDishes = {{ selected_dishes|safe }};
+let preSelectedCooking = {{ selected_cooking|safe }};
+let preSelectedIngredients = {{ selected_ingredients|safe }};
+
+
+window.onload = function() {
+
+    preSelectedDishes.forEach(function(id) {
+        document.getElementById("dishDropdown").value = id;
+        addDish();
+    });
+
+    preSelectedIngredients.forEach(function(id) {
+    document.getElementById("ingredientDropdown").value = id;
+    addIngredient();
+    });
+
+
+    preSelectedCooking.forEach(function(id) {
+        document.getElementById("cookingDropdown").value = id;
+        addCooking();
+    });
+
+};
+
+</script>
+
+{% endblock %}

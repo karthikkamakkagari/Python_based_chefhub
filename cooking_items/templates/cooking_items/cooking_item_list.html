@@ -1,133 +1,238 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Cooking Items - CateringPro</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #fceabb, #f8b500);
-      min-height: 100vh;
-    }
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<style>
 
-    .container {
-      max-width: 1000px;
-      margin: 40px auto;
-      padding: 20px;
-      background-color: #ffffffcc;
-      border-radius: 15px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-    }
+.page-container {
+    background: #e6d8b5;
+    padding: 40px;
+    border-radius: 25px;
+    margin: 30px;
+    min-height: 80vh;
+}
 
-    h1 {
-      text-align: center;
-      color: #e74c3c;
-      margin-bottom: 25px;
-    }
+.page-title {
+    text-align: center;
+    color: #e74c3c;
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
 
-    .add-btn {
-      display: inline-block;
-      text-decoration: none;
-      background-color: #27ae60;
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      transition: background-color 0.3s;
-    }
+.top-buttons {
+    text-align: center;
+    margin-bottom: 25px;
+}
 
-    .add-btn:hover {
-      background-color: #1e8449;
-    }
+.btn-custom {
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    margin: 5px;
+    text-decoration: none;
+    color: white;
+    display: inline-block;
+}
 
-    .items-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
+.btn-add { background: #27ae60; }
+.btn-export { background: #2980b9; }
+.btn-import { background: #f39c12; }
 
-    .item-card {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
+/* 🔍 SEARCH STYLING */
+.search-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
 
-    .item-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-    }
+.search-form {
+    display: flex;
+    gap: 10px;
+    background: white;
+    padding: 10px 15px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+}
 
-    .item-card h2 {
-      margin: 0 0 10px 0;
-      color: #e74c3c;
-      font-size: 1.2em;
-    }
+.search-input {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 260px;
+    outline: none;
+}
 
-    .unit {
-      font-size: 0.95em;
-      color: #333;
-      margin-bottom: 10px;
-    }
+.search-input:focus {
+    border-color: #2980b9;
+}
 
-    .actions a {
-      text-decoration: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      margin-right: 5px;
-      font-weight: bold;
-      transition: background-color 0.3s;
-      color: #fff;
-    }
+.search-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 8px;
+    background: #2980b9;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
 
-    .actions .edit-btn {
-      background-color: #f1c40f;
-    }
+.clear-btn {
+    padding: 8px 15px;
+    background: #e74c3c;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+}
 
-    .actions .edit-btn:hover {
-      background-color: #d4ac0d;
-    }
+/* TOTAL COUNT */
+.total-count {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 16px;
+}
 
-    .actions .delete-btn {
-      background-color: #e74c3c;
-    }
+/* CARDS */
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
 
-    .actions .delete-btn:hover {
-      background-color: #c0392b;
-    }
+.card {
+    background: #f4f4f4;
+    width: 250px;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+    transition: 0.3s;
+}
 
-    .no-items {
-      text-align: center;
-      font-style: italic;
-      color: #555;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Cooking Items</h1>
-    <a href="{% url 'cooking_item_add' %}" class="add-btn">➕ Add New Item</a>
+.card:hover {
+    transform: translateY(-5px);
+}
 
-    {% if items %}
-    <div class="items-grid">
-      {% for item in items %}
-      <div class="item-card">
-        <h2>{{ item.name_en }}</h2>
-        <p class="unit">Unit: {{ item.unit }}</p>
-        <div class="actions">
-          <a href="{% url 'cooking_item_edit' item.pk %}" class="edit-btn">✏️ Edit</a>
-          <a href="{% url 'cooking_item_delete' item.pk %}" class="delete-btn">❌ Delete</a>
-        </div>
-      </div>
-      {% endfor %}
+.card img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 20px;
+    margin-bottom: 15px;
+}
+
+.item-name {
+    color: #e74c3c;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.item-detail {
+    margin: 8px 0;
+    font-size: 15px;
+}
+
+.card-buttons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-edit {
+    background: #f1c40f;
+    padding: 8px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
+.btn-delete {
+    background: #e74c3c;
+    padding: 8px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
+</style>
+
+<div class="page-container">
+
+    <div class="page-title">Cooking Items</div>
+
+    <div class="top-buttons">
+        <a href="{% url 'cooking_item_add' %}" class="btn-custom btn-add">➕ Add Cooking Item</a>
+        <a href="{% url 'export_cooking_items' %}" class="btn-custom btn-export">📤 Export Excel</a>
+        <a href="{% url 'import_cooking_items' %}" class="btn-custom btn-import">📥 Import Excel</a>
     </div>
-    {% else %}
-      <p class="no-items">No cooking items yet.</p>
-    {% endif %}
-  </div>
-</body>
-</html>
+
+    <!-- 🔍 Centered Search -->
+    <div class="search-wrapper">
+        <form method="GET" class="search-form">
+            <input type="text"
+                   name="q"
+                   placeholder="Search by ID or Name..."
+                   value="{{ query }}"
+                   class="search-input">
+
+            <button type="submit" class="search-btn">Search</button>
+
+            {% if query %}
+                <a href="{% url 'cooking_item_list' %}" class="clear-btn">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <div class="total-count">
+        Total Items: {{ total_items }}
+    </div>
+
+    <div class="cards-container">
+        {% for item in items %}
+        <div class="card">
+
+            {% if item.image %}
+                <img src="{{ item.image.url }}">
+            {% else %}
+                <img src="{% static 'images/no-image.png' %}">
+            {% endif %}
+
+            <div class="item-name">
+                {{ item.display_name }}
+            </div>
+
+            <div class="item-detail">
+                <strong>ID:</strong> {{ item.item_id }}
+            </div>
+
+            <div class="item-detail">
+                <strong>Quantity:</strong> 
+                {{ item.quantity|default:"Not Set" }}
+            </div>
+
+            <div class="item-detail">
+                <strong>Cost:</strong> 
+                ₹{{ item.cost|default:"0.00" }}
+            </div>
+
+            <div class="card-buttons">
+                <a href="{% url 'cooking_item_edit' item.id %}" class="btn-edit">✏ Edit</a>
+                <a href="{% url 'cooking_item_delete' item.id %}" class="btn-delete">✖ Delete</a>
+            </div>
+
+        </div>
+        {% empty %}
+            <p>No cooking items available.</p>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

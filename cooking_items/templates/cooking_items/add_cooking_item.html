@@ -2,14 +2,73 @@
 <html>
 <head>
     <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(135deg, #fceabb, #f8b500);
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #e74c3c;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 6px 0 15px 0;
+        }
+
+        button {
+            background: #27ae60;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+        }
+
+        .cancel {
+            text-decoration: none;
+            background: #e74c3c;
+            padding: 8px 12px;
+            color: white;
+            border-radius: 6px;
+        }
+
+        img {
+            margin-top: 10px;
+            width: 150px;
+            border-radius: 8px;
+        }
+    </style>
 </head>
 <body>
+
+<div class="form-container">
     <h1>{{ title }}</h1>
-    <form method="post">
+
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
+
         {{ form.as_p }}
-        <button type="submit">Save</button>
-        <a href="{% url 'cooking_item_list' %}">Cancel</a>
+
+        {% if form.instance.image %}
+            <img src="{{ form.instance.image.url }}">
+        {% endif %}
+       
+
+        <button type="submit">💾 Save</button>
+        <a href="{% url 'cooking_item_list' %}" class="cancel">Cancel</a>
     </form>
+</div>
+
 </body>
 </html>

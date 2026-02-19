@@ -202,12 +202,15 @@
       </div>
       <div class="card">
         <a href="{% url 'customer_list' %}">Customers</a>
+        <p>Total: {{ customer_count }}</p>
       </div>
       <div class="card">
         <a href="{% url 'dish_list' %}">Dishes</a>
+        <p>Total: {{ dish_count }}</p>
       </div>
       <div class="card">
         <a href="{% url 'cooking_item_list' %}">Manage Cooking Items</a>
+        <p>Total: {{ cooking_item_count }}</p>
       </div>
     </div>
     <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
