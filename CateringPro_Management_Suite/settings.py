@@ -1,11 +1,13 @@
 import os
 from pathlib import Path
+from django.core.management.utils import get_random_secret_key
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-REPLACE_WITH_YOUR_SECRET_KEY'
-DEBUG = True
-ALLOWED_HOSTS = []
+SECRET_KEY = 'django-insecure-DJANGO_SECRET_KEY'
+DEBUG = 'RENDER' not in os.environ  # True locally, False on Render
+# DEBUG = True
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']  # Use '*' temporarily for testing
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -81,3 +83,17 @@ LOGOUT_REDIRECT_URL = '/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+if 'RENDER' in os.environ:
+    ALLOWED_HOSTS.append(os.environ.get('RENDER_EXTERNAL_HOSTNAME'))
+    ALLOWED_HOSTS.append('localhost')  # For local testing
+else:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
+# Secret Key from env var
+SECRET_KEY = os.environ.get('SECRET_KEY', get_random_secret_key())
+
+# Static Files with WhiteNoise
+MIDDLEWARE = ['django.middleware.security.SecurityMiddleware'] + [m for m in MIDDLEWARE if m != 'django.middleware.security.SecurityMiddleware'] + ['whitenoise.middleware.WhiteNoiseMiddleware']
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Collect static here
